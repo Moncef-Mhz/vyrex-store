@@ -1,8 +1,9 @@
+import { RegisterSchemaType } from "@/db/schema/user";
 import { auth } from "@/lib/auth";
-import { LoginType, NewUserType } from "@/types/auth";
+import { LoginType } from "@/types/auth";
 import { redirect } from "next/navigation";
 
-export const register = async (data: NewUserType) => {
+export const registerUser = async (data: RegisterSchemaType) => {
   const { email, firstName, lastName, password } = data;
 
   try {

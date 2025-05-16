@@ -1,4 +1,6 @@
 import { pgTable, text, timestamp, boolean } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -50,3 +52,18 @@ export const verification = pgTable("verification", {
   createdAt: timestamp("created_at"),
   updatedAt: timestamp("updated_at"),
 });
+
+export const UserSchema = createInsertSchema(user, {
+  firstName: z.string(),
+});
+
+export type InsertUserSchema = z.infer<typeof UserSchema>;
+
+export const RegisterSchema = UserSchema.extend({
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  confirmPassword: z.string(),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
+});
+export type RegisterSchemaType = z.infer<typeof RegisterSchema>;
